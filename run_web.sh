@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # Run config
-export FLASK_APP=psan 
+export FLASK_APP=pid 
 export FLASK_RUN_HOST=0.0.0.0
 
 # Use venv
 source venv/bin/activate
 
 # Start background worker
-(celery -A psan.celery.celery worker)&
+echo "Zadek"
+(celery -A celery.celery worker)&
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start celery worker. EXIT $status" >&2
