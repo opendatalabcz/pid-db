@@ -2,7 +2,7 @@ import os
 import time
 from urllib.parse import urljoin
 from pid_parser import parse_routes, parse_trips, parse_services, parse_stops, api_request, parse_shapes
-from sql_declaration import get_engine
+from sql_declaration import get_engine, create_schema
 from sqlalchemy.orm.session import sessionmaker
 
 # GFTS
@@ -10,11 +10,12 @@ gtfs_url_api = 'https://api.golemio.cz/v2/gtfs/'
 # Load all list api
 endpoint_parsers = {
     "routes": parse_routes,
-    "trips": parse_trips,
     "services": parse_services,
     "stops": parse_stops,
+    "trips": parse_trips,
 }
 # Engine
+create_schema()
 engine = get_engine(debug=True)
 Session = sessionmaker(bind=engine)
 # Load Tables PID
@@ -36,7 +37,9 @@ for endpoint, parser in endpoint_parsers.items():
         if endpoint == 'trips':
             shapes_uid.update({item.shape_id for item in parsed_items})
         with Session.begin() as session:
-            session.add_all(parsed_items)
+            for item in parsed_items:
+                session.merge(item)
+            #session.add_all(parsed_items)
         offset += LIMIT
         time.sleep(1.54)
 

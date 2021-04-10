@@ -82,7 +82,7 @@ class Trip(Base):
 
     uid = Column(String, primary_key=True, unique=True, nullable=False)
     route_id = Column(String, ForeignKey("routes.uid"), nullable=False),
-    shape_id = Column(String, ForeignKey("shapes.uid"), nullable=False)
+    shape_id = Column(String, nullable=False)
     service_id = Column(String, ForeignKey("services.uid"), nullable=False)
     direction = Column(Integer, nullable=True)
     exceptional = Column(Integer, nullable=True)

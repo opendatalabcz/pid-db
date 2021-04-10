@@ -19,7 +19,7 @@ services:
       - db_data:/var/lib/postgresql/data
       - ./db:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_DB: ${DB_NAME:-pid_db}
+      POSTGRES_DB: ${DB_NAME:-pid-db}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
   redis:
