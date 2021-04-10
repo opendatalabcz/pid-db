@@ -7,7 +7,7 @@ WORKDIR /srv
 RUN make setup
 
 # Copy app source
-COPY . /srv
+COPY ./srv /srv
 
 # Run app as standard user
 RUN useradd flask && chown flask instance

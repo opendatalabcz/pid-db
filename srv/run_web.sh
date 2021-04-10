@@ -8,11 +8,18 @@ export FLASK_RUN_HOST=0.0.0.0
 source venv/bin/activate
 
 # Start background worker
-echo "Zadek"
-(celery -A celery.celery worker)&
+(celery -A pid-tasks worker)&
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start celery worker. EXIT $status" >&2
+  exit $status
+fi
+
+# Start celery beat
+(celery -A pid-tasks beat -s ./instance/celerybeat-schedule)&
+status=$?
+if [ $status -ne 0 ]; then
+  echo "Failed to start celery beat. EXIT $status" >&2
   exit $status
 fi
 
@@ -21,6 +28,14 @@ fi
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start flask. EXIT $status" >&2
+  exit $status
+fi
+
+# Init database
+(python init_db.py)&
+status=$?
+if [ $status -ne 0 ]; then
+  echo "Failed to download statics from Golemio. EXIT $status" >&2
   exit $status
 fi
 
