@@ -11,10 +11,10 @@ from sqlalchemy.orm.session import sessionmaker
 gtfs_url_api = 'https://api.golemio.cz/v2/'
 # Load all list api
 endpoint_parsers = {
-    # "gtfs/routes": parse_routes,
-    # "gtfs/services": parse_services,
-    # "gtfs/stops": parse_stops,
-    # "gtfs/trips": parse_trips,
+    "gtfs/routes": parse_routes,
+    "gtfs/services": parse_services,
+    "gtfs/stops": parse_stops,
+    "gtfs/trips": parse_trips,
     "vehiclepositions": parse_vehicles,
 }
 # Engine
@@ -34,14 +34,15 @@ for endpoint, parser in endpoint_parsers.items():
                                             os.environ["GOLEMIO_ACCESS_TOKEN"],
                                             limit=LIMIT,
                                             offset=offset)
+        # TODO: Resolve unknown Enums
         # TODO: Resolve wrong response
         assert return_code == 200
         parsed_items = parser(response)
         if endpoint == 'trips':
             shapes_uid.update({item.shape_id for item in parsed_items})
-        for item in parsed_items:
-            with Session.begin() as session:
-                session.merge(item)
+        with Session.begin() as session:
+            #TODO: Solve not empty
+            session.add_all(parsed_items)
         offset += LIMIT
         time.sleep(1.54)
 
@@ -65,6 +66,7 @@ while True:
                     session.merge(item)
         time.sleep(10.5)
 
+# TODO: Add shapes
 for shape_uid in shapes_uid:
     return_code, response = api_request(urljoin(gtfs_url_api, f"shapes/{shape_uid}"),
                                         os.environ["GOLEMIO_ACCESS_TOKEN"])

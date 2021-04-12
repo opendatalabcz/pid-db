@@ -99,14 +99,22 @@ class Trip(Base):
 
 
 class VehicleTypeEnum(IntEnum):
+    Metro = 1
     Tram = 2
     Bus = 3
     RegionalBus = 4
     NightBus = 5
     NightTram = 6
     TemporaryService = 7
+    CableCar = 8
+    SchoolService = 9
     DisabledTransportService = 10
+    ContractedService = 11
     Ferry = 12
+    Train = 13
+    TemporaryBusOnTrainLine = 14
+    TemporaryTram = 15
+    NightRegionalBus = 16
     Other = 17
 
 
@@ -115,7 +123,7 @@ class Vehicle(Base):
 
     trip_id = Column(String, ForeignKey("trips.uid"), primary_key=True, nullable=False)
     origin_route_name = Column(String, nullable=False)
-    cis_line_id = Column(String,  nullable=True)
+    cis_line_id = Column(String, nullable=True)
     cis_trip_number = Column(Integer, nullable=False)
     start_timestamp = Column(DateTime, nullable=False)
     last_modified_timestamp = Column(DateTime, nullable=False)
@@ -148,6 +156,9 @@ class VehiclePosition(Base):
     start_timestamp = Column(DateTime, nullable=False)
     lat = Column(Float, nullable=False)
     lon = Column(Float, nullable=False)
+    trip_sequence_id = Column(Integer, nullable=False)
+    bearing = Column(Integer, nullable=True)
+    dist_traveled = Column(Float, nullable=True)
     next_stop_id = Column(String, ForeignKey("stops.uid"), nullable=True)
     last_stop_id = Column(String, ForeignKey("stops.uid"), nullable=True)
     is_canceled = Column(Boolean, nullable=False)
@@ -162,6 +173,9 @@ def receive_before_update(mapper, connection, target):
                    'start_timestamp',
                    'lat',
                    'lon',
+                   'bearing',
+                   'dist_traveled',
+                   'trip_sequence_id',
                    'next_stop_id',
                    'last_stop_id',
                    'is_canceled']
@@ -182,5 +196,3 @@ def receive_before_update(mapper, connection, target):
         Session = sessionmaker(bind=connection.engine)
         with Session.begin() as session:
             session.merge(pos)
-
-
