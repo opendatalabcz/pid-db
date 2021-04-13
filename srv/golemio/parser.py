@@ -2,7 +2,7 @@ from typing import List, Tuple, Callable, Dict, Any
 from requests import get
 from datetime import datetime
 import dateutil.parser as dateparser
-from sql_declaration import Stop, Route, Trip, Service, Shape, Vehicle
+from .sql_declaration import Stop, Route, Trip, Service, Shape, Vehicle
 
 
 def parse_stop(entry: Dict) -> Stop:

@@ -87,7 +87,7 @@ class Trip(Base):
     uid = Column(String, primary_key=True, unique=True, nullable=False)
     route_id = Column(String, ForeignKey("routes.uid"), nullable=False)
     service_id = Column(String, ForeignKey("services.uid"), nullable=False)
-    shape_id = Column(String, nullable=False)
+    shape_id = Column(String, nullable=False)  # Part of shape Foreign Key
     direction = Column(Integer, nullable=True)
     exceptional = Column(Integer, nullable=True)
     headsign = Column(String, nullable=False)
@@ -151,8 +151,8 @@ class Vehicle(Base):
 class VehiclePosition(Base):
     __tablename__ = "positions"
 
-    trip_id = Column(String, ForeignKey("trips.uid"), primary_key=True, nullable=False)
-    last_modified_timestamp = Column(DateTime, primary_key=True, nullable=False)
+    trip_id = Column(String, ForeignKey("trips.uid"), primary_key=True, unique=False, nullable=False)
+    last_modified_timestamp = Column(DateTime, primary_key=True, unique=False, nullable=False)
     start_timestamp = Column(DateTime, nullable=False)
     lat = Column(Float, nullable=False)
     lon = Column(Float, nullable=False)

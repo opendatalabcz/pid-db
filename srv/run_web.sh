@@ -7,6 +7,14 @@ export FLASK_RUN_HOST=0.0.0.0
 # Use venv
 source venv/bin/activate
 
+# Init database
+(python init_db.py)
+status=$?
+if [ $status -ne 0 ]; then
+  echo "Failed to download statics from Golemio. EXIT $status" >&2
+  exit $status
+fi
+
 # Start background worker
 (celery -A pid-tasks worker)&
 status=$?
@@ -15,7 +23,7 @@ if [ $status -ne 0 ]; then
   exit $status
 fi
 
-# Start celery beat
+# Start celery beats
 (celery -A pid-tasks beat -s ./instance/celerybeat-schedule)&
 status=$?
 if [ $status -ne 0 ]; then
@@ -23,21 +31,6 @@ if [ $status -ne 0 ]; then
   exit $status
 fi
 
-# Start web
-(flask run)&
-status=$?
-if [ $status -ne 0 ]; then
-  echo "Failed to start flask. EXIT $status" >&2
-  exit $status
-fi
-
-# Init database
-(python init_db.py)&
-status=$?
-if [ $status -ne 0 ]; then
-  echo "Failed to download statics from Golemio. EXIT $status" >&2
-  exit $status
-fi
 
 # Naive check runs checks once a minute to see if either of the processes exited.
 # This illustrates part of the heavy lifting you need to do if you want to run
