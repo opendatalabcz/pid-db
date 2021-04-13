@@ -113,8 +113,10 @@ def parse_vehicle(entry: Dict) -> Vehicle:
     trip = props['trip']
     all_position = props['all_positions']
     lon, lat = entry['geometry']['coordinates']
-    departure_time = None if last_position['last_stop']['departure_time'] is None else dateparser.parse(last_position['last_stop']['departure_time'])
-    arrival_time = None if last_position['next_stop']['arrival_time'] is None else dateparser.parse(last_position['next_stop']['arrival_time'])
+    departure_time = None if last_position['last_stop']['departure_time'] is None else dateparser.parse(
+        last_position['last_stop']['departure_time'])
+    arrival_time = None if last_position['next_stop']['arrival_time'] is None else dateparser.parse(
+        last_position['next_stop']['arrival_time'])
     return Vehicle(
         trip_id=trip['gtfs']['trip_id'],
         origin_route_name=trip['origin_route_name'],

@@ -1,14 +1,17 @@
 import os
+import logging
 from celery import Celery, Task
+from celery.utils.log import get_task_logger
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from urllib.parse import urljoin
 from golemio.parser import parse_vehicles, api_request
 from golemio.sql_declaration import get_engine, create_schema
 
+logger = get_task_logger(__name__)
 app = Celery(__name__,
              backend=os.environ["CELERY_REDIS"],
-             broker=os.environ["CELERY_REDIS"],)
+             broker=os.environ["CELERY_REDIS"], )
 
 SECRET_TOKEN = os.environ['GOLEMIO_ACCESS_TOKEN']
 LIMIT = 10000
@@ -18,9 +21,9 @@ TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.000Z'
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    print('Setting up periodic tasks')
+    logging.debug('Setting up periodic tasks')
     sender.add_periodic_task(10.0, update_positions.s(), name='check every 10')
-    print('Done periodic tasks')
+    logging.debug('Done periodic tasks')
 
 
 class VehiclePositionUpdate(Task):
@@ -30,7 +33,7 @@ class VehiclePositionUpdate(Task):
 
 @app.task(bind=True, base=VehiclePositionUpdate)
 def update_positions(self):
-    print(f"Getting updates from {str(self.updated_since)}")
+    print(f"Getting updates changed since {str(self.updated_since)}")
     offset = 0
     engine = get_engine(debug=False)
     Session = sessionmaker(bind=engine)
@@ -44,10 +47,10 @@ def update_positions(self):
                                             **kwargs)
         assert return_code == 200, f"Updating vehicle position failed with {return_code}"
         parsed_items = parse_vehicles(response)
-        print(f'Return code {return_code} - {len(parsed_items)}')
         if len(parsed_items) < LIMIT:
             self.updated_since = datetime.utcnow().strftime(TIME_FORMAT)
         if len(parsed_items) != 0:
+            print(f"\t{len(parsed_items)} vehicle positions changed.")
             with Session.begin() as session:
                 for item in parsed_items:
                     session.merge(item)

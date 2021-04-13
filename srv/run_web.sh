@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Run config
-export FLASK_APP=pid 
-export FLASK_RUN_HOST=0.0.0.0
-
 # Use venv
 source venv/bin/activate
 
@@ -39,14 +35,12 @@ fi
 # Otherwise it loops forever, waking up every 60 seconds
 
 while sleep 60; do
-  ps aux | grep flask | grep -q -v grep
-  PROCESS_1_STATUS=$?
   ps aux | grep celery | grep -q -v grep
   PROCESS_2_STATUS=$?
   # If the greps above find anything, they exit with 0 status
   # If they are not both 0, then something is wrong
-  if [ $PROCESS_1_STATUS -ne 0 -o $PROCESS_2_STATUS -ne 0 ]; then
-    echo "One of the processes has already exited." >&2
+  if [ $PROCESS_2_STATUS -ne 0 ]; then
+    echo "Celery has already exited." >&2
     exit 1
   fi
 done
