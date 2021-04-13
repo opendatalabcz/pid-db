@@ -12,8 +12,7 @@ Downloading and storing transportation data from [golemio](https://golemioapi.do
   * Vehicle Positions
   
 
-## Instalation
-### Preliminaries
+## Launching
 1. [Install Docker](https://docs.docker.com/desktop/)
 2. Create .env file with secrets and basic config. API token is connected to your [golemio account](https://api.golemio.cz/api-keys).
 ```dotenv
