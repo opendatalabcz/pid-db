@@ -1,5 +1,5 @@
 # PID database archive
-Downloading and storing transportation data from [https://golemioapi.docs.apiary.io/#reference/public-transport/gtfs-shapes](golemio api) into the postgresql database.
+Downloading and storing transportation data from [golemio](https://golemioapi.docs.apiary.io/#reference/public-transport/gtfs-shapes) into the postgresql database.
 
 * After startup loading static tables:
   * Routes
