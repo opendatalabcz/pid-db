@@ -10,7 +10,7 @@ RUN make setup
 COPY ./srv /srv
 
 # Run app as standard user
-RUN useradd flask && chown flask instance
+RUN useradd flask
 USER flask
 
 # Run target
