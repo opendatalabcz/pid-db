@@ -4,13 +4,11 @@ FROM python:3.7
 COPY requirements.txt /srv
 COPY Makefile /srv
 WORKDIR /srv
-RUN make setup
 
 # Copy app source
 COPY ./srv /srv
 
-# Run app as standard user
-RUN useradd flask
+RUN  make setup && chmod +x ./run_web.sh && useradd flask && chown -R flask ./instance
 USER flask
 
 # Run target

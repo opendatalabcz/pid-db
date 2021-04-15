@@ -6,6 +6,8 @@ venv/bin/activate: requirements.txt
 	$(VENV); pip install -Ur requirements.txt
 	touch venv/bin/activate
 
+setup: $(VENV)
+	mkdir -p instance
 # Run web
 run: $(VENV)
 	./run_web.sh
