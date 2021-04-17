@@ -37,3 +37,12 @@ docker-compose up
 * [Celery task for regular DB updates](./srv/pid-tasks.py)
 * [Database structure in SQLAlchemy](./srv/golemio/sql_declaration.py)
 * [Parser of Golemio Transport API](./srv/golemio/parser.py)
+
+### Troubleshooting
+* Check if your API key works at [apiary](https://golemioapi.docs.apiary.io/#reference/public-transport/realtime-vehicle-positions/get-all-vehicle-positions)
+* Clear volume if initialization failed, for example like this:
+  * Be aware that following commands removes all stopped containers and volumes
+  ``` bask
+  docker container prune
+  docker volume prune
+    ```
