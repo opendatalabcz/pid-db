@@ -1,0 +1,8 @@
+Flask~=1.1.2
+celery[redis]~=5.0.5
+requests~=2.25.1
+gtfs-realtime-bindings
+SQLalchemy~=1.4.7
+python-dateutil~=2.8.1
+tqdm~=4.60.0
+psycopg2

@@ -1,0 +1,38 @@
+version: "2.4"
+services:
+  flask:
+    build: .
+    links:
+      - db
+      - redis
+    environment: 
+      DB_HOST: db
+      DB_NAME: ${DB_NAME:-pid-db}
+      CELERY_REDIS: redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - 5000:5000
+  db:
+    image: postgres:13.1-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_NAME:-pid-db}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:6.0.9-alpine
+
+volumes:
+  db_data:
